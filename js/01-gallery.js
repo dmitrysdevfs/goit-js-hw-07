@@ -23,5 +23,29 @@ const makeGalleryItems = (galleryItems) =>
 
 const galleryRef = document.querySelector('.gallery');
 galleryRef.insertAdjacentHTML('beforeend', makeGalleryItems(galleryItems));
+galleryRef.addEventListener('click', onGalleryClick);
 
+function onGalleryClick(evt) {
+  evt.preventDefault();
+  if (evt.target.nodeName !== 'IMG') {
+    return;
+  }
 
+  const selectedImg = evt.target.dataset.source;
+
+  const modalSelectedImg = basicLightbox.create(`
+    <img src=${selectedImg} width="800" height="600">
+  `);
+  modalSelectedImg.show();
+
+  if (modalSelectedImg.visible) {
+    window.addEventListener('keydown', closeModalPressOnEcs);
+
+    function closeModalPressOnEcs(evt) {
+      if (evt.code === 'Escape') {
+        modalSelectedImg.close();
+        window.removeEventListener('keydown', closeModalPressOnEcs);
+      }
+    }
+  }
+}
